@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUSIC音樂</title>
+    <link rel="stylesheet" href="css/index.css" media="all">
+    <link rel="stylesheet" href="css/top.css" media="all">
+    <link rel="stylesheet" href="css/song.css" media="all">
+</head>
+<style>
+
+@media (max-width: 768px) {
+    .head {
+        height: 110vh; 
+        position: relative;
+    }
+    #contents {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .slide img {
+        margin-left:10px;
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+    }
+
+    .search-bar {
+        width: 90%;
+        margin: 20px auto; 
+    }
+
+    .songs {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .songtags {
+        width: 80%;
+        max-width: 200px;
+    }
+}
+    </style>
+        <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+        }
+    </script>
+<body>
+    <div class="setbody">
+        <!-- 功能列表 -->
+        <header class="head">
+            <iframe src="sidebar.html" frameborder="0" height="100%"></iframe>
+        </header>
+        
+        <!-- 內容區域 -->
+        <main id="contents" style="width:auto;">
+            <div class="top">
+                <div class="slider">
+                    <div class="slide"><img src="img/1.webp" alt="唱片1"></div>
+                    <div class="slide"><img src="img/1.webp" alt="唱片2"></div>
+                    <div class="slide"><img src="img/1.webp" alt="唱片3"></div>
+                </div>
+            </div>
+            <script>
+                let index = 0;
+                const slides = document.querySelectorAll(".slide");
+                const totalSlides = slides.length;
+
+                function nextSlide() {
+                    index = (index + 1) % totalSlides;
+                    document.querySelector(".slider").style.transform = `translateX(-${index * 100}%)`;
+                }
+
+                setInterval(nextSlide, 3000);
+            </script>
+
+            <!-- 搜尋欄位 -->
+            <div class="search-bar">
+                <input type="text" placeholder="搜尋" id="searchInput">
+                <button onclick="searchMusic()">
+                    <img src="img/Search 02.png" alt="搜尋">
+                </button>
+            </div>
+
+            <!-- 歌曲區域 -->
+            <div class="song">
+                <div class="hot">
+                    <h2>今日熱門</h2>
+                    <ul>
+                        <li> 
+                            <a href="music.html">
+                            <div class="songs">
+                                <div class="songco">
+                                   音樂名稱<br>
+                                    <span>音樂作者 / 類別</span>
+                                </div>
+                                <button class="songtags">加入歌單</button>
+                            </div>
+                            </a>
+                        </li>
+                        <li> 
+                        <a href="music.html">
+                            <div class="songs">
+                                <div class="songco">
+                                音樂名稱<br>
+                                    <span>音樂作者 / 類別</span>
+                                </div>
+                                <button class="songtags">加入歌單</button>
+                            </div>
+                            </a>
+                        </li>
+                        <li> 
+                            <a href="music.html">
+                            <div class="songs">
+                                <div class="songco">
+                                音樂名稱<br>
+                                    <span>音樂作者 / 類別</span>
+                                </div>
+                                <button class="songtags">加入歌單</button>
+                            </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="persontt">
+                    <h2>個性建議</h2>
+                    <ul>
+                        <li> 
+                            <a href="music.html">
+                            <div class="songs">
+                                <div class="songco">
+                                   音樂名稱<br>
+                                    <span>音樂作者 / 類別</span>
+                                </div>
+                                <button class="songtags">加入歌單</button>
+                            </div>
+                            </a>
+                        </li>
+                        <li> 
+                        <a href="music.html">
+                            <div class="songs">
+                                <div class="songco">
+                                音樂名稱<br>
+                                    <span>音樂作者 / 類別</span>
+                                </div>
+                                <button class="songtags">加入歌單</button>
+                            </div>
+                            </a>
+                        </li>
+                        <li> 
+                            <a href="music.html">
+                            <div class="songs">
+                                <div class="songco">
+                                音樂名稱<br>
+                                    <span>音樂作者 / 類別</span>
+                                </div>
+                                <button class="songtags">加入歌單</button>
+                            </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

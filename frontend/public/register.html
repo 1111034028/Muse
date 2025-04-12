@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="css/register.css" media="all"> -->
+    <title>註冊頁面</title>
+    <style>
+        body {
+            background-color: #C2D2E8;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .register-container {
+            background: #36393F;
+            width: 450px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .register-container h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            font-size: 18px;
+            width: 97%;
+            height: 50px;
+            padding: 5px;
+            border-radius: 8px;
+            border: 2px solid white;
+            background-color: #22252C;
+            color: white;
+            text-align: center;
+            outline: none;
+        }
+
+        .input-group input::placeholder {
+            color: white;
+            opacity: 0.6;
+        }
+
+        .register-btn {
+            width: 100%;
+            height: 50px;
+            border-radius: 8px;
+            border: none;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #5865F2;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .register-btn:hover {
+            background-color: #3a42cc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <h2>註冊帳號</h2>
+        <form id="registerForm" method="POST">
+            <div class="input-group">
+                <label for="username">帳號</label>
+                <input type="text" id="username" placeholder="請輸入帳號名稱">
+            </div>
+            <div class="input-group">
+                <label for="email">郵件</label>
+                <input type="email" id="email" placeholder="請輸入E-mail">
+            </div>
+            <div class="input-group">
+                <label for="password">密碼</label>
+                <input type="password" id="password" placeholder="設置登入密碼">
+            </div>
+            <div id="registerResult"></div>
+            <button type="submit" class="register-btn" id="register">註冊</button>
+        </form>
+    </div>
+</body>
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        register();
+    });
+
+    const register = () => {
+        const formData = {
+            username: document.getElementById('username').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+
+        const data = JSON.stringify(formData)
+        console.log(JSON.stringify(formData));
+        fetch("http://localhost:8000/api/Login/register", {
+            // 設定為 POST 請求
+            method: 'post',
+            // 在 headers 加入 json 格式
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // 傳送內容須轉換為字串
+            body: data,
+        })
+        .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok ' + res.statusText);
+                }
+                return res.json();
+            })
+            .then(body => {
+                console.log(body);
+                const div = document.getElementById('registerForm');
+                div.innerHTML = '';
+                const message = body.success || body.error || '未知錯誤';
+                const span = document.createElement('span');
+                span.innerText = message;
+                div.appendChild(span);
+                if (body.success) {
+                    window.location.href = 'choicepeople.html';
+                } else {
+                    errorMessage.innerText = body.error || '登入失敗，請稍後再試';
+                }
+            })
+
+            .catch(error => {
+                console.error("Fetch Error:", error);
+                alert("請求失敗，請檢查 API 是否運行！");
+            });
+    };
+
+
+</script>
+
+</html>

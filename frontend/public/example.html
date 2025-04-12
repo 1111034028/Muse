@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example fetch api</title>
+</head>
+
+<body>
+    <h1>hi everyone</h1>
+
+    <button onclick="deleteExample()">我要刪除</button>
+
+    <h2>GET</h2>
+    <div id="getExample">
+
+    </div>
+
+    <h2>DELETE</h2>
+    <div id="deleteExample">
+
+    </div>
+    <script>
+        const getExample = () => {
+            fetch('http://localhost:8000/api/example?key=value', {
+                method: 'POST',
+                body: JSON.stringify({
+                    key: 'value'
+                })
+            })
+                .then(res => res.json())
+                .then(body => {
+                    const div = document.getElementById('getExample')
+                    const value = body?.data?.key
+
+                    const span = document.createElement('span')
+                    span.innerText = `屬性: key; 值: ${value}`
+                    div.appendChild(span)
+                })
+        }
+
+        const deleteExample = () => {
+            fetch('http://localhost:8000/api/example?id=1', {
+                method: 'DELETE',
+            })
+                .then(res => res.json())
+                .then(body => {
+                    const div = document.getElementById('deleteExample')
+                    const message = body?.data
+                    const span = document.createElement('span')
+                    span.innerText = message
+                    div.appendChild(span)
+                })
+        }
+        getExample()
+    </script>
+</body>
+
+</html>

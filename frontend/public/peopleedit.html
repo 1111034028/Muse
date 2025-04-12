@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/index.css" media="all">
+    <link rel="stylesheet" href="css/sidebar.css" media="all">
+    <title>編輯個人資料</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        main {
+            margin-top: 40px;
+        }
+
+        .contents {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .profile {
+            margin: 20px 0;
+        }
+
+        .profile img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+
+        .input-group {
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .input-group label {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            margin: 20px;
+            font-size: 24px;
+            height: 50px;
+            width: 560px;
+            padding: 10px;
+            border: none;
+            background: #6874F3;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .input-group input#name {
+            color: white;
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .input-group input::placeholder {
+            font-weight: bold;
+            color: white;
+            font-size: 23px;
+            opacity: 1;
+        }
+
+        .save-button {
+            margin: 0 180px;
+            display: block;
+            width: 50%;
+            padding: 10px;
+            margin-top: 20px;
+            background: #E53935;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 24px;
+            font-weight: bold;
+            /* 新增字體加粗 */
+            cursor: pointer;
+        }
+
+        .save-button:hover {
+            background: #C62828;
+        }
+
+        h2 {
+            font-size: 23;
+            color: white;
+            background-color: #36393f;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+    </style>
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+        }
+    </script>
+</head>
+
+<body>
+    <header class="head">
+        <iframe src="sidebar.html" frameborder="0" width="350" height="100%"></iframe>
+    </header>
+    <h2>使用者</h2>
+    <main>
+        <div class="contents">
+            <div class="profile">
+                <img src="img/avatar.png" alt="User Profile">
+            </div>
+            <form id="editForm" method="POST">
+                <div class="input-group">
+                    <label for="name">帳號</label>
+                    <input type="text" id="username" name="username" placeholder="我是名字">
+                </div>
+                <div class="input-group">
+                    <label for="email">郵件</label>
+                    <input type="email" id="email" name="email" placeholder="sxxxxx@gmail.com">
+                </div>
+                <button type="submit" class="save-button" id="register">儲存</button>
+            </form>
+        </div>
+    </main>
+</body>
+<script>
+    document.getElementById('editForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        Imedit();
+    });
+    const Imedit = () => {
+        const formData = {
+            username: document.getElementById('username').value,
+            email: document.getElementById('email').value
+        };
+
+        const data = JSON.stringify(formData)
+        console.log(JSON.stringify(formData));
+        fetch("http://localhost:8000/api/Login/Imedit", {
+            // 設定為 POST 請求
+            method: 'post',
+            credentials: 'include',
+            // 在 headers 加入 json 格式
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // 傳送內容須轉換為字串
+            body: data,
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok ' + res.statusText);
+                }
+                return res.json();
+            })
+            .then(body => {
+                console.log(body);
+                const div = document.getElementById('editForm');
+                div.innerHTML = '';
+                const message = body.success || body.error || '未知錯誤';
+                const span = document.createElement('span');
+                span.innerText = message;
+                div.appendChild(span);
+            })
+
+            .catch(error => {
+                console.error("Fetch Error:", error);
+                alert("請求失敗，請檢查 API 是否運行！");
+            });
+    };
+</script>
+
+
+</html>

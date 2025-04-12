@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>登入用戶</title>
+    <!-- <link rel="stylesheet" href="css/login.css" media="all"> -->
+    <style>
+        .error-text {
+            color: red;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+
+        body {
+            background-color: #C2D2E8;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .login {
+            background: #36393F;
+            width: 630px;
+            height: 450px;
+            padding: 10px 40px;
+            border-radius: 12px;
+            text-align: center;
+            align-items: center;
+        }
+
+        .login h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        .logintop {
+            width: 100%;
+        }
+
+        .inputtext {
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .inputtext label {
+            color: white;
+            font-size: 20px;
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        .inputtext input {
+            font-size: 18px;
+            width: 450px;
+            margin: 15px 5px;
+            height: 50px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ffffff;
+            background-color: #22252C;
+            color: white;
+            text-align: center;
+            outline: none;
+        }
+
+        .inputtext input::placeholder {
+            color: white;
+            opacity: 0.9;
+        }
+
+        .logindown {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 0 20px;
+        }
+
+        .login-button {
+            width: 250px;
+            margin: 0 15px;
+            height: 52px;
+            border-radius: 8px;
+            border: none;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .login-login {
+            background-color: #4b53ff;
+        }
+
+        .login-login:hover {
+            background-color: #3a42cc;
+        }
+
+        .login-register {
+            background-color: #2ba84a;
+        }
+
+        .login-register:hover {
+            background-color: #23893a;
+        }
+
+
+        /* 忘記密碼樣式 */
+        .forgot-password {
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            text-decoration: none;
+            color: #bbbbbb;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="loginForm">
+        <div class="login">
+            <h2>登入帳號</h2>
+            <div class="logintop">
+                <div class="inputtext">
+                    <label for="username"><b>帳號</b></label>
+                    <input type="text" id="username" placeholder="請輸入帳號">
+                </div>
+                <div class="inputtext">
+                    <label for="password"><b>密碼</b></label>
+                    <input type="password" id="password" placeholder="請輸入密碼">
+                </div>
+            </div>
+
+            <div class="logindown">
+                <button type="submit" class="login-button login-login">登入</button>
+                <a href="register.html"><button type="button" class="login-button login-register">註冊</button></a>
+            </div>
+
+            <div class="forgot-password">
+                <a href="forgot_password.html">忘記密碼？</a>
+            </div>
+
+            <p id="error-message" class="error-text"></p>
+        </div>
+    </form>
+</body>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        login();
+    });
+
+    const login = () => {
+        const formData = {
+            username: document.getElementById('username').value.trim(),
+            password: document.getElementById('password').value.trim()
+        };
+
+        if (!formData.username || !formData.password) {
+            errorMessage.innerText = '請輸入帳號和密碼！';
+            return;
+        }
+
+        const data = JSON.stringify(formData);
+        console.log(JSON.stringify(formData));
+
+        fetch("http://localhost:8000/api/Login/login", {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: data,
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok: ' + res.statusText);
+                }
+                return res.json();
+            })
+            .then(body => {
+                console.log(body);
+                const div = document.getElementById('loginForm');
+                div.innerHTML = '';
+                const message = body.success || body.error || '未知錯誤';
+                const span = document.createElement('span');
+                span.innerText = message;
+                div.appendChild(span);
+                if (body.success) {
+                    window.location.href = 'index.html';
+                } else {
+                    errorMessage.innerText = body.error || '登入失敗，請稍後再試';
+                }
+            })
+            .catch(error => {
+                console.error("Fetch Error:", error);
+                alert("無法連接到伺服器，請稍後再試");
+            });
+    };
+</script>
+
+</html>

@@ -1,0 +1,23 @@
+body{
+    background-color: #E7E7E7;
+    width: auto;
+    margin: 0;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+
+.head {
+    height: 100vh; 
+    position: fixed;
+    top: 0;         
+    left: 0;        
+    z-index: 10;
+}
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+}

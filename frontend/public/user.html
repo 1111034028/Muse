@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用者畫面</title>
+    <link rel="stylesheet" href="css/user.css" media="all">
+    <link rel="stylesheet" href="css/index.css" media="all">
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+        }
+    </script>
+</head>
+
+<body>
+    <div class="setbody">
+        <!-- 功能列表 -->
+        <header class="head">
+            <iframe src="sidebar.html" frameborder="0" width="350" height="100%"></iframe>
+        </header>
+
+        <!-- 內容區域 -->
+        <main id="contents">
+            <h2>使用者</h2>
+            <div class="left">
+                <div class="avatar"></div>
+                <div class="name">用戶名字</div>
+                <a href="Manage_permissions.html">查看權限</a>
+            </div>
+            <div class="right">
+                <a href="peopleedit.html" class="button">修改個人資料</a>
+                <a href="passwordedit.html" class="button">修改密碼</a>
+                <a href="category.html" class="button">音樂偏好設置</a>
+                <a href="Playlist.html" class="button">查看歌單</a>
+                <a href="index.html" class="button logout">登出</a>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

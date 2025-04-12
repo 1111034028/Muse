@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUSIC音樂</title>
+    <style>
+        HTML, body {
+            width: auto;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+            font-size: 25px; 
+            text-decoration: none;
+            color: white;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background: #36393F;
+            color: white;
+            width: 60px; 
+            transition: width 0.5s ease, padding 0.5s ease; 
+            /* overflow: hidden; */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar:not(.collapsed) {
+            width: 200px; 
+        }
+
+        .sidebar.collapsed {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu {
+            padding: 10px;
+            align-items: center;
+            cursor: pointer;
+            margin: 3%;
+            gap: 10px;
+            font-size: 35px;
+            transition: padding 0.3s ease;
+        }
+
+        .menu span {
+            font-size: 25px;
+            white-space: nowrap;
+            display: inline;
+            transition: opacity 0.3s ease;
+        }
+
+        .collapsed .menu span {
+            opacity: 0; 
+        }
+
+        .sidebarbtn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 35px;
+            padding: 15px;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        .user-profile {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .user-profile img {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 2px solid white;
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .user-profile span {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            margin-top: 10px;
+        }
+        .sidebar.collapsed .user-profile img,
+        .sidebar.collapsed .user-profile span {
+            display: none;
+        }
+
+        .user-icon {
+            font-size: 38px;
+            display: none;
+        }
+
+        .sidebar.collapsed .user-icon {
+            display: block;
+            margin-top: 30px;
+        }
+
+        .sidebar.collapsed .menu-vector img {
+            display: block;
+        }
+
+        .sidebar:not(.collapsed) .menu-vector img {
+            display: none;
+        }
+
+        .song {
+            display: flex;
+            padding: 0 15px 0 80px;
+        }
+
+        .hot, .persontt {
+            width: 45%;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            margin: 5px;
+        }
+
+        h2 {
+            color: #000000;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 1.2em;
+        }
+
+        span {
+            display: block;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+    <script>
+        let userName = 'user';
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function updateUserName() {
+            let userElement = document.getElementById('userName');
+
+            if (userName === 'user') {
+                userElement.innerHTML = `<a href="login.html" target="_parent">user</a>`;
+            } else {
+                userElement.innerText = userName;
+            }
+        }
+
+        window.onload = updateUserName;
+    </script>
+</head>
+
+<body>
+    <div class="sidebar collapsed">
+        <!-- 側邊欄開關按鈕 -->
+        <button class="sidebarbtn" onclick="toggleSidebar()">☰</button>
+
+        <!-- 這裡是存放vector的區塊，根據側邊欄是否收縮來顯示或隱藏圖片 -->
+        <div class="menu menu-vector">
+            <img src="img/Vector (1).png" alt="Image 1">
+        </div>
+
+        <!-- 用戶頭像和名稱 -->
+        <div class="user-profile">
+            <a href="user.html" target="_top"><img src="img/avatar.png" alt="User Avatar"></a>
+            <!-- <iframe src="peopleedit.html"><img src="img/avatar.png" alt="User Avatar"></iframe> -->
+            <span id="userName"></span>
+        </div>
+
+        <!-- 菜單項目 -->
+        <div class="menu">
+            <a href="ranking.html" target="_parent">
+                <img src="img/Group.png">
+            </a>
+            <span>
+                <a href="ranking.html" target="_parent">排行</a>
+            </span>
+        </div>
+        <div class="menu">
+            <a href="index.html" target="_parent">
+                <img src="img/Vector.png">
+            </a>
+            <span>
+                <a href="index.html" target="_parent">首頁</a>
+            </span>
+        </div>
+    </div>
+</body>
+
+</html>
