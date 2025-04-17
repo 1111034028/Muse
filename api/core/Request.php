@@ -43,4 +43,18 @@ class Request
         }
         return [];
     }
+
+    public function getHeader($key)
+    {
+        return $this->getHeaders()[$key] ?? null;
+    }
+
+    public function getHeaders()
+    {
+        $headers = [];
+        foreach (getallheaders() as $name => $value) {
+            $headers[$name] = $value;
+        }
+        return $headers;
+    }
 }

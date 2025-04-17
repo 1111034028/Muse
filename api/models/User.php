@@ -10,6 +10,7 @@ use PDOException;
 class User
 {
     private static $table = 'member';
+    public $member_id = '';
     public $username = '';
     public $email = '';
     public $password = '';

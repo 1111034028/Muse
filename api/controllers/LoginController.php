@@ -2,6 +2,8 @@
 
 namespace project\controllers;
 
+use Exception;
+use Firebase\JWT\ExpiredException;
 use project\core\Request;
 use project\models\User;
 use project\models\User_add;
@@ -49,6 +51,7 @@ class LoginController
             return ['error' => '所有欄位都是必填的'];
         }
 
+        // FIXME: Should hash the password
         // $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         session_start();
         $user = new User();
@@ -66,7 +69,7 @@ class LoginController
     //login
     public function login(Request $request)
     {
-        session_start();
+        // TODO: Remove this line
         $username = $request->body()['username'] ?? null;
         $password = $request->body()['password'] ?? null;
 
@@ -74,28 +77,25 @@ class LoginController
             return ['error' => '所有欄位都是必填的'];
         }
 
-        // $user = new User();
-        // $user->username = $username;
-        // $user->password = $password;
-
-        // if ($user->findByUsername($username, $password)) {
-        //     return ['success' => '註冊成功'];
-        // } else {
-        //     return ['error' => '註冊失敗，請稍後再試'];
-        // }
-
         $user = User::findByUsername($username, $password);
 
         if (!$user) {
             return ['error' => '使用者不存在'];
         }
 
-        //$_SESSION['member_id'] = $user->member_id;
-        $_SESSION['username'] = $user->username;
-        $_SESSION['email'] = $user->email;
+        $payload = [
+            'sub' => $user->member_id,
+            'iat' => time(),
+            'exp' => time() + 3600, // 1 hour
+            // 'role' => $user->role, // TODO: Add role if needed
+        ];
+
+        $token = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
+
         return [
             'success' => true,
             'message' => '登入成功',
+            'token' => $token,
         ];
 
     }
@@ -146,12 +146,14 @@ class LoginController
     //user imformation edit
     public function Imedit(Request $request)
     {
-        session_start();
-        $member_id = $_SESSION['member_id'] ?? null;
-        if (!$member_id) {
-            return ['error' => '未登入，請先登入'];
+        $token = str_replace('Bearer ', '', $request->getHeader('Authorization'));
+        try {
+            $parsedToken = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+        } catch (ExpiredException | Exception $e) {
+            // FIXME: 401
+            return ['error' => '未登入，請先登入', 'detail' => $e->getMessage()];
         }
-
+        
         $username = $request->body()['username'] ?? null;
         $email = $request->body()['email'] ?? null;
 
@@ -161,10 +163,12 @@ class LoginController
             return ['error' => '所有欄位都是必填的'];
         }
 
+        // FIXME: Username should be unique and cannot be changed
         $user = new User();
-        $user->member_id = $_SESSION['member_id'];
+        $user->member_id = $parsedToken->sub;
         $user->username = $username;
         $user->email = $email;
+        // FIXME: Support password change
 
         if ($user->save_edit()) {
             return ['success' => '更新成功'];
