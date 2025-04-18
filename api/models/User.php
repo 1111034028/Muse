@@ -61,7 +61,7 @@ class User
         return null;
     }
 
-    //user imformation edit
+    //user information edit
     public function save_edit()
     {
         $db = Database::getConnection();
@@ -76,19 +76,19 @@ class User
         return $stmt->execute();
     }
 
-    // //user change password
-    // public function save_change()
-    // {
-    //     $db = Database::getConnection();
+    //user change password
+    public function save_change()
+    {
+        $db = Database::getConnection();
 
-    //     $sql = "UPDATE member SET Password = :password WHERE Username = :username";
-    //     $stmt = $db->prepare($sql);
+        $sql = "UPDATE member SET Password = :password WHERE Member_Id = :member_id";
+        $stmt = $db->prepare($sql);
 
-    //     $stmt->bindParam(':username', $this->username);
-    //     $stmt->bindParam(':password', $this->password);
+        $stmt->bindParam(':member_id', $this->member_id);
+        $stmt->bindParam(':password', $this->password);
 
-    //     return $stmt->execute();
-    // }
+        return $stmt->execute();
+    }
 
     //user forget password
     public static function findByEmail(string $email)

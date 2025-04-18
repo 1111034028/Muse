@@ -143,7 +143,7 @@ class LoginController
     //         return ['error' => '新增失敗，請稍後再試'];
     //     }
     // }
-    //user imformation edit
+    //user information edit
     public function Imedit(Request $request)
     {
         $token = str_replace('Bearer ', '', $request->getHeader('Authorization'));
@@ -177,36 +177,35 @@ class LoginController
         }
 
     }
-    // //user change password
-    // public function changePassword(Request $request)
-    // {
-    //     // if (!isset($_SESSION['user_id'])) {
-    //     //     return ['error' => '未登入，請先登入'];
-    //     // }
-    //     // $data = $request->body();
-    //     // if (empty($data)) {
-    //     //     $data = json_decode(file_get_contents('php://input'), true);
-    //     // }
-    //     $newPassword = $request->body()['newPassword'] ?? null;
-    //     $confirmPassword = $request->body()['confirmPassword'] ?? null;
+    //user change password
+    public function changePassword(Request $request)
+    {
+        $token = str_replace('Bearer ', '', $request->getHeader('Authorization'));
+        try {
+            $parsedToken = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+        } catch (ExpiredException | Exception $e) {
+            return ['error' => '未登入，請先登入', 'detail' => $e->getMessage()];
+        }
 
-    //     if (empty($newPassword) || empty($confirmPassword)) {
-    //         return ['error' => '所有欄位都是必填的'];
-    //     }
+        $newPassword = $request->body()['newPassword'] ?? null;
+        $confirmPassword = $request->body()['confirmPassword'] ?? null;
 
-    //     session_start();
-    //     $user = new User();
-    //     $user->id = $_SESSION['user_id'];
-    //     $user->newPassword = $newPassword;
-    //     $user->confirmPassword = $confirmPassword;
+        if (empty($newPassword) || empty($confirmPassword)) {
+            return ['error' => '所有欄位都是必填的'];
+        }
 
-    //     if ($user->save_change()) {
-    //         return ['success' => '密碼更新成功'];
-    //     } else {
-    //         return ['error' => '密碼更新失敗，請稍後再試'];
-    //     }
+        $user = new User();
+        $user->member_id = $parsedToken->sub;
+        $user->password = $newPassword;
 
-    // }
+        if ($user->save_change()) {
+            return ['success' => '密碼更新成功'];
+        } else {
+            return ['error' => '密碼更新失敗，請稍後再試'];
+        }
+
+    }
+
     // //user add pin login
     // public function loginPinnum(Request $request)
     // {

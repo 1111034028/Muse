@@ -161,6 +161,7 @@
             // 在 headers 加入 json 格式
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             // 傳送內容須轉換為字串
             body: data,

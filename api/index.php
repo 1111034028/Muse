@@ -38,7 +38,7 @@ $app->router->post('/api/Login/login', [LoginController::class, 'login']);
 // $app->router->post('/api/Login/add', [LoginController::class, 'add']);
 // FIXME: Rename to $app->router->patch('/api/me', [UserController::class, 'update']);
 $app->router->post('/api/Login/Imedit', [LoginController::class, 'Imedit']);
-// $app->router->post('/api/Login/changePassword', [LoginController::class, 'changePassword']);
+$app->router->post('/api/Login/changePassword', [LoginController::class, 'changePassword']);
 // $app->router->get('/api/Login/loginPinnum', [LoginController::class, 'loginPinnum']);
 $app->router->post('/api/Login/forgetpwd', [LoginController::class, 'forgetpwd']);
 $app->router->post('/api/Login/resetpwd', [LoginController::class, 'resetpwd']);
