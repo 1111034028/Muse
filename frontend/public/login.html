@@ -196,6 +196,7 @@
             })
             .then(body => {
                 console.log(body);
+                localStorage.setItem('token', body.token);
                 const div = document.getElementById('loginForm');
                 div.innerHTML = '';
                 const message = body.success || body.error || '未知錯誤';

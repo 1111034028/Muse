@@ -90,6 +90,29 @@ class User
         return $stmt->execute();
     }
 
+    public static function findById(string $member_id)
+    {
+        $db = Database::getConnection();
+
+        $sql = "SELECT * FROM member WHERE Member_Id = :member_id";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':member_id', $member_id);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            $user = new User();
+            $user->member_id = $row['Member_Id'];
+            $user->username = $row['Username'];
+            $user->email = $row['Email'];
+            return $user;
+        }
+
+        return null;
+    }
+    
+
     //user forget password
     public static function findByEmail(string $email)
     {

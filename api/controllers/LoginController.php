@@ -162,7 +162,12 @@ class LoginController
         if (empty($username) || empty($email)) {
             return ['error' => '所有欄位都是必填的'];
         }
+        $user=User::findById($parsedToken->sub);
+        $user2=User::findByEmail($email);
 
+        if ($user2 && $user2->email !== $user->email) {
+            return ['error' => '信箱已被使用'];
+        }
         // FIXME: Username should be unique and cannot be changed
         $user = new User();
         $user->member_id = $parsedToken->sub;
