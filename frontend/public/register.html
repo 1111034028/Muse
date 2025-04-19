@@ -143,6 +143,7 @@
                 span.innerText = message;
                 div.appendChild(span);
                 if (body.success) {
+                    // TODO: 驗證信箱
                     window.location.href = 'choicepeople.html';
                 } else {
                     errorMessage.innerText = body.error || '登入失敗，請稍後再試';

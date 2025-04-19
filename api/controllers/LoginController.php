@@ -5,6 +5,7 @@ namespace project\controllers;
 use Exception;
 use Firebase\JWT\ExpiredException;
 use project\core\Request;
+use project\Mailer\Mailer;
 use project\models\User;
 use project\models\User_add;
 use Firebase\JWT\JWT;
@@ -66,6 +67,82 @@ class LoginController
         }
 
     }
+
+    public function sendVerificationEmail(Request $request)
+    {
+        $email = $request->body()['email'] ?? null;
+        $redirect_url = $request->body()['redirect_url'] ?? null;
+
+        if (empty($email)) {
+            return ['error' => '所有欄位都是必填的'];
+        }
+
+        $user = User::findByEmail($email);
+
+        if (!$user) {
+            return ['error' => '使用者不存在'];
+        }
+
+        $mailer = new Mailer();
+        $to = $email;
+        $subject = '歡迎註冊';
+
+        $payload = [
+            'sub' => $user->member_id,
+            'iat' => time(),
+            'exp' => time() + 3600, // 1 hour
+        ];
+
+        $token = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
+
+        $link = sprintf('%s/api/Login/verify?token=%s&redirect_url=%s', $_ENV['APP_URL'], $token, $redirect_url);
+
+        $body = sprintf(
+            '<html><body><h1>%s</h1><p>%s：<a href="%s">%s</a></p></body></html>',
+            '歡迎！',
+            '請點擊以下連結以完成驗證',
+            $link,
+            $link
+        );
+
+        $mail_sent = $mailer->sendEmail($to, $subject, $body);
+
+        if ($mail_sent) {
+            return ['success' => '已寄送驗證郵件！'];
+        } else {
+            return ['error' => '寄送驗證郵件失敗，請稍後再試'];
+        }
+    }
+
+    public function verify(Request $request)
+    {
+        $token = $request->query()['token'] ?? null;
+        $redirect_url = $request->query()['redirect_url'] ?? null;
+
+        if (empty($token)) {
+            return ['error' => '無效的驗證連結'];
+        }
+
+        try {
+            $parsedToken = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+
+            $user = new User();
+            $user->member_id = $parsedToken->sub;
+            $user->verified_at = date('Y-m-d H:i:s', time());
+
+            if ($user->save_edit()) {
+                header("Location: $redirect_url");
+                exit;
+                // return ['success' => '驗證成功'];
+            } else {
+                return ['error' => '驗證失敗，請稍後再試'];
+            }
+        } catch (ExpiredException | Exception $e) {
+            // FIXME: 401
+            return ['error' => '無效的驗證連結', 'detail' => $e->getMessage()];
+        }
+    }
+
     //login
     public function login(Request $request)
     {
@@ -99,6 +176,9 @@ class LoginController
         ];
 
     }
+
+
+
     // //user add
     // public function add(Request $request)
     // {
@@ -153,7 +233,7 @@ class LoginController
             // FIXME: 401
             return ['error' => '未登入，請先登入', 'detail' => $e->getMessage()];
         }
-        
+
         $username = $request->body()['username'] ?? null;
         $email = $request->body()['email'] ?? null;
 
@@ -162,8 +242,8 @@ class LoginController
         if (empty($username) || empty($email)) {
             return ['error' => '所有欄位都是必填的'];
         }
-        $user=User::findById($parsedToken->sub);
-        $user2=User::findByEmail($email);
+        $user = User::findById($parsedToken->sub);
+        $user2 = User::findByEmail($email);
 
         if ($user2 && $user2->email !== $user->email) {
             return ['error' => '信箱已被使用'];

@@ -14,6 +14,7 @@ class User
     public $username = '';
     public $email = '';
     public $password = '';
+    public $verified_at = null;
 
     //register
     public function save()
@@ -62,19 +63,40 @@ class User
     }
 
     //user information edit
+    // FIXME: Rename to update
     public function save_edit()
     {
         $db = Database::getConnection();
 
-        $sql = "UPDATE member SET Username = :username, Email = :email WHERE Member_Id = :member_id";
+        $fields = [];
+        $params = [':member_id' => $this->member_id];
+
+        if (!empty($this->username)) {
+            $fields[] = "Username = :username";
+            $params[':username'] = $this->username;
+        }
+
+        if (!empty($this->email)) {
+            $fields[] = "Email = :email";
+            $params[':email'] = $this->email;
+        }
+
+        if (!empty($this->verified_at)) {
+            // FIXME: Use lowercase for all column names
+            $fields[] = "Verified_At = :verified_at";
+            $params[':verified_at'] = $this->verified_at;
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $sql = "UPDATE member SET " . implode(', ', $fields) . " WHERE Member_Id = :member_id";
         $stmt = $db->prepare($sql);
 
-        $stmt->bindParam(':username', $this->username);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->bindParam(':member_id', $this->member_id);
-
-        return $stmt->execute();
+        return $stmt->execute($params);
     }
+
 
     //user change password
     public function save_change()
@@ -111,7 +133,7 @@ class User
 
         return null;
     }
-    
+
 
     //user forget password
     public static function findByEmail(string $email)

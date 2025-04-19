@@ -21,7 +21,7 @@ $dotenv->load();
 $app = new Application();
 
 header('Access-Control-Allow-Origin:  http://127.0.0.1:5501'); // Replace with your frontend URL
-header("Access-Control-Allow-Credentials: true"); 
+header("Access-Control-Allow-Credentials: true");
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 // $app->on(Application::EVENT_BEFORE_REQUEST, function(){
@@ -34,6 +34,8 @@ header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 // $app->router->delete('/api/Login', [LoginController::class, 'deleteDemo']);
 // FIXME: Rename to $app->router->post('/api/auth/register', [AuthController::class, 'register']);
 $app->router->post('/api/Login/register', [LoginController::class, 'register']);
+$app->router->post('/api/Login/send-verification-email', [LoginController::class, 'sendVerificationEmail']);
+$app->router->get('/api/Login/verify', [LoginController::class, 'verify']);
 $app->router->post('/api/Login/login', [LoginController::class, 'login']);
 // $app->router->post('/api/Login/add', [LoginController::class, 'add']);
 // FIXME: Rename to $app->router->patch('/api/me', [UserController::class, 'update']);
