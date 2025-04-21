@@ -7,14 +7,14 @@ use Firebase\JWT\ExpiredException;
 use project\core\Request;
 use project\Mailer\Mailer;
 use project\models\User;
-use project\models\User_add;
+use project\models\SubUser;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 class LoginController
 {
 
-    function __construct(
+    public function __construct(
         // private $exampleService = new ();
 
     ) {
@@ -46,26 +46,23 @@ class LoginController
         $email = $request->body()['email'] ?? null;
         $password = $request->body()['password'] ?? null;
 
-        // var_dump($request->body());
-        // var_dump($username, $email, $password);
-        if (empty($username) || empty($email) || empty($password)) {
-            return ['error' => '所有欄位都是必填的'];
-        }
+        if (empty($username)) return ['error' => '使用者名稱是必填的'];
+        if (empty($email)) return ['error' => '信箱是必填的'];
+        if (empty($password)) return ['error' => '密碼是必填的'];
 
         // FIXME: Should hash the password
         // $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-        session_start();
         $user = new User();
         $user->username = $username;
         $user->email = $email;
         $user->password = $password;
 
-        if ($user->save()) {
+        try {
+            $user->save();
             return ['success' => '註冊成功'];
-        } else {
-            return ['error' => '註冊失敗，請稍後再試'];
+        } catch (Exception $e) {
+            return ['error' => '註冊失敗，請稍後再試', 'detail' => $e->getMessage()];
         }
-
     }
 
     public function sendVerificationEmail(Request $request)
@@ -90,7 +87,7 @@ class LoginController
         $payload = [
             'sub' => $user->member_id,
             'iat' => time(),
-            'exp' => time() + 3600, // 1 hour
+            'exp' => time() + 3600*24*7, // 7 days
         ];
 
         $token = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
@@ -124,18 +121,18 @@ class LoginController
         }
 
         try {
-            $parsedToken = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+            $parsed_token = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
 
             $user = new User();
-            $user->member_id = $parsedToken->sub;
+            $user->member_id = $parsed_token->sub;
             $user->verified_at = date('Y-m-d H:i:s', time());
 
-            if ($user->save_edit()) {
+            try {
+                $user->save();
                 header("Location: $redirect_url");
                 exit;
-                // return ['success' => '驗證成功'];
-            } else {
-                return ['error' => '驗證失敗，請稍後再試'];
+            } catch (Exception $e) {
+                return ['error' => '驗證失敗，請稍後再試', 'detail' => $e->getMessage()];
             }
         } catch (ExpiredException | Exception $e) {
             // FIXME: 401
@@ -228,7 +225,7 @@ class LoginController
     {
         $token = str_replace('Bearer ', '', $request->getHeader('Authorization'));
         try {
-            $parsedToken = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+            $parsed_token = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
         } catch (ExpiredException | Exception $e) {
             // FIXME: 401
             return ['error' => '未登入，請先登入', 'detail' => $e->getMessage()];
@@ -236,26 +233,26 @@ class LoginController
 
         $username = $request->body()['username'] ?? null;
         $email = $request->body()['email'] ?? null;
+        $password = $request->body()['password'] ?? null;
 
-        // var_dump($request->body());
-        // var_dump($username, $email, $password);
-        if (empty($username) || empty($email)) {
-            return ['error' => '所有欄位都是必填的'];
+        if ($email) {
+            $user = User::findById($parsed_token->sub);
+            if ($email !== $user->email) {
+                $existing_user = User::findByEmail($email);
+                if ($existing_user) {
+                    return ['error' => '信箱已被使用'];
+                }
+            }
         }
-        $user = User::findById($parsedToken->sub);
-        $user2 = User::findByEmail($email);
 
-        if ($user2 && $user2->email !== $user->email) {
-            return ['error' => '信箱已被使用'];
-        }
         // FIXME: Username should be unique and cannot be changed
         $user = new User();
-        $user->member_id = $parsedToken->sub;
+        $user->member_id = $parsed_token->sub;
         $user->username = $username;
         $user->email = $email;
-        // FIXME: Support password change
+        $user->password = $password;
 
-        if ($user->save_edit()) {
+        if ($user->update()) {
             return ['success' => '更新成功'];
         } else {
             return ['error' => '更新失敗，請稍後再試'];
@@ -267,7 +264,7 @@ class LoginController
     {
         $token = str_replace('Bearer ', '', $request->getHeader('Authorization'));
         try {
-            $parsedToken = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+            $parsed_token = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
         } catch (ExpiredException | Exception $e) {
             return ['error' => '未登入，請先登入', 'detail' => $e->getMessage()];
         }
@@ -280,7 +277,7 @@ class LoginController
         }
 
         $user = new User();
-        $user->member_id = $parsedToken->sub;
+        $user->member_id = $parsed_token->sub;
         $user->password = $newPassword;
 
         if ($user->save_change()) {

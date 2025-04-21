@@ -4,6 +4,22 @@ namespace project\core;
 
 class Request
 {
+    private array $params = [];
+
+    public function setParams(array $params)
+    {
+        $this->params = $params;
+    }
+
+    public function getParam(string $name, $default = null)
+    {
+        return $this->params[$name] ?? $default;
+    }
+
+    public function getParams(): array
+    {
+        return $this->params;
+    }
 
     public function getPath()
     {
@@ -37,7 +53,7 @@ class Request
         // $data = json_decode($inputJSON, TRUE); // 將 JSON 轉換為陣列
         // error_log("JSON Data: " . print_r($data, true)); // 除錯：檢查 JSON 資料
         // return $data;
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'PATCH') {
             $inputJSON = file_get_contents('php://input');
             return json_decode($inputJSON, true);
         }

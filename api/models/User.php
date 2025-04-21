@@ -1,13 +1,13 @@
 <?php
 namespace project\models;
 
-use app\core\Model;
+use project\models\Model;
 use project\core\Database;
 use app\core\Application;
 use PDO;
 use PDOException;
 
-class User
+class User extends Model
 {
     private static $table = 'member';
     public $member_id = '';
@@ -63,32 +63,30 @@ class User
     }
 
     //user information edit
-    // FIXME: Rename to update
-    public function save_edit()
+    public function update()
     {
         $db = Database::getConnection();
 
         $fields = [];
         $params = [':member_id' => $this->member_id];
 
-        if (!empty($this->username)) {
-            $fields[] = "Username = :username";
-            $params[':username'] = $this->username;
-        }
+        $fieldMappings = [
+            'username' => 'Username',
+            'email' => 'Email',
+            'verified_at' => 'Verified_At',
+            'password' => 'Password'
+        ];
 
-        if (!empty($this->email)) {
-            $fields[] = "Email = :email";
-            $params[':email'] = $this->email;
-        }
-
-        if (!empty($this->verified_at)) {
-            // FIXME: Use lowercase for all column names
-            $fields[] = "Verified_At = :verified_at";
-            $params[':verified_at'] = $this->verified_at;
+        foreach ($fieldMappings as $property => $dbField) {
+            if (!empty($this->$property)) {
+                $paramName = ':' . $property;
+                $fields[] = "$dbField = $paramName";
+                $params[$paramName] = $this->$property;
+            }
         }
 
         if (empty($fields)) {
-            return false;
+            return true;
         }
 
         $sql = "UPDATE member SET " . implode(', ', $fields) . " WHERE Member_Id = :member_id";
@@ -139,15 +137,16 @@ class User
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row) {
-            $user = new User();
-            $user->member_id = $row['Member_Id'];
-            $user->username = $row['Username'];
-            $user->email = $row['Email'];
-            return $user;
+        if (!$row) {
+            return null;
         }
 
-        return null;
+        $user = new User();
+        $user->member_id = $row['Member_Id'];
+        $user->username = $row['Username'];
+        $user->email = $row['Email'];
+
+        return $user;
     }
 
 

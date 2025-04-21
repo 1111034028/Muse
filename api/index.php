@@ -10,6 +10,7 @@ namespace project;
 use Dotenv\Dotenv;
 use project\controllers\LoginController;
 use project\core\Application;
+use project\controllers\SubUserController;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -37,6 +38,12 @@ $app->router->post('/api/Login/register', [LoginController::class, 'register']);
 $app->router->post('/api/Login/send-verification-email', [LoginController::class, 'sendVerificationEmail']);
 $app->router->get('/api/Login/verify', [LoginController::class, 'verify']);
 $app->router->post('/api/Login/login', [LoginController::class, 'login']);
+//新增多個使用者
+$app->router->get('/api/sub-users', [SubUserController::class, 'list']);
+$app->router->post('/api/sub-users', [SubUserController::class, 'create']);
+$app->router->get('/api/sub-users/:id', [SubUserController::class, 'get']);
+$app->router->patch('/api/sub-users/:id', [SubUserController::class, 'update']);
+$app->router->delete('/api/sub-users/:id', [SubUserController::class, 'delete']);
 // $app->router->post('/api/Login/add', [LoginController::class, 'add']);
 // FIXME: Rename to $app->router->patch('/api/me', [UserController::class, 'update']);
 $app->router->post('/api/Login/Imedit', [LoginController::class, 'Imedit']);
