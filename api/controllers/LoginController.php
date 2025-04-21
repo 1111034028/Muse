@@ -71,7 +71,7 @@ class LoginController
     public function sendVerificationEmail(Request $request)
     {
         $email = $request->body()['email'] ?? null;
-        $redirect_url = $request->body()['redirect_url'] ?? null;
+        $redirect_url = $request->body()['redirect_url'] ?? 'http://127.0.0.1:5501/frontend/public/index.html';
 
         if (empty($email)) {
             return ['error' => '所有欄位都是必填的'];
@@ -117,7 +117,7 @@ class LoginController
     public function verify(Request $request)
     {
         $token = $request->query()['token'] ?? null;
-        $redirect_url = $request->query()['redirect_url'] ?? null;
+        $redirect_url = $request->query()['redirect_url'] ?? 'http://127.0.0.1:5501/frontend/public/index.html';
 
         if (empty($token)) {
             return ['error' => '無效的驗證連結'];

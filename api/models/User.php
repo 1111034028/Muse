@@ -103,13 +103,29 @@ class User
     {
         $db = Database::getConnection();
 
-        $sql = "UPDATE member SET Password = :password WHERE Member_Id = :member_id";
+        $fields = [];
+        $params = [':member_id' => $this->member_id];
+
+        if (!empty($this->password)) {
+            $fields[] = "Password = :password";
+            $params[':password'] = $this->password;
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $sql = "UPDATE member SET " . implode(', ', $fields) . " WHERE Member_Id = :member_id";
         $stmt = $db->prepare($sql);
 
-        $stmt->bindParam(':member_id', $this->member_id);
-        $stmt->bindParam(':password', $this->password);
+        return $stmt->execute($params);
+        // $sql = "UPDATE member SET Password = :password WHERE Member_Id = :member_id";
+        // $stmt = $db->prepare($sql);
 
-        return $stmt->execute();
+        // $stmt->bindParam(':member_id', $this->member_id);
+        // $stmt->bindParam(':password', $this->password);
+
+        // return $stmt->execute();
     }
 
     public static function findById(string $member_id)

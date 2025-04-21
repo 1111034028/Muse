@@ -128,7 +128,7 @@
             // 傳送內容須轉換為字串
             body: data,
         })
-        .then(res => {
+            .then(res => {
                 if (!res.ok) {
                     throw new Error('Network response was not ok ' + res.statusText);
                 }
@@ -144,9 +144,10 @@
                 div.appendChild(span);
                 if (body.success) {
                     // TODO: 驗證信箱
-                    window.location.href = 'choicepeople.html';
+                    sendVerificationEmail(formData.email);
+                    window.location.href = 'login.html';
                 } else {
-                    errorMessage.innerText = body.error || '登入失敗，請稍後再試';
+                    errorMessage.innerText = body.error || '註冊失敗，請稍後再試';
                 }
             })
 
@@ -156,7 +157,22 @@
             });
     };
 
-
+    const sendVerificationEmail = (email) => {
+        fetch("http://localhost:8000/api/Login/send-verification-email", {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({ email }),
+        })
+            .then(res => res.json())
+            .then(body => {
+                console.log("驗證信寄送結果：", body);
+            })
+            .catch(error => {
+                console.error("寄送驗證信錯誤：", error);
+            });
+    };
 </script>
 
 </html>
