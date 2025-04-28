@@ -7,10 +7,10 @@ use project\core\Request;
 use project\models\SubUser;
 use project\controllers\Controller;
 
-class SubUserController extends Controller
-{
-    public function create(Request $request)
-    {
+class SubUserController extends Controller{
+    
+    public function create(Request $request){
+
         $parsed_token = $this->verifyToken($request);
         if (!$parsed_token) {
             return ['error' => '未登入，請先登入'];
