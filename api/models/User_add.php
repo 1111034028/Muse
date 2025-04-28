@@ -29,7 +29,7 @@ class User_add{
     }
 
     //user add pin login
-    public function findByPin(string $pin_num):
+    public function findByPin(string $pin_num)
     {
         $db = Database::getConnection();
 

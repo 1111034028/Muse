@@ -8,6 +8,7 @@ use project\core\Database;
 // TODO: Rename db table member_att to sub_member
 // TODO: Rename db column Member_Add_Id to Sub_Member_Id
 // TODO: Rename db column Music_Preference to Preferences with json type
+
 class SubUser extends Model
 {
     private static $table = 'sub_member';

@@ -10,7 +10,11 @@ namespace project;
 use Dotenv\Dotenv;
 use project\controllers\LoginController;
 use project\core\Application;
+use project\core\Request;
 use project\controllers\SubUserController;
+use project\controllers\PlayMusicController;
+use project\controllers\InsMusicController;
+use project\controllers\SearchMusicController;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -51,6 +55,18 @@ $app->router->post('/api/Login/changePassword', [LoginController::class, 'change
 // $app->router->get('/api/Login/loginPinnum', [LoginController::class, 'loginPinnum']);
 $app->router->post('/api/Login/forgetpwd', [LoginController::class, 'forgetpwd']);
 $app->router->post('/api/Login/resetpwd', [LoginController::class, 'resetpwd']);
+
+$app->router->post('/api/PlayMusic/findMusicByName', [PlayMusicController::class, 'getMusicByName']);
+$app->router->get('/api/PlayMusic/getTop3Music', [PlayMusicController::class, 'getTop3Music']);
+$app->router->get('/api/PlayMusic/getRecommendedMusic', [PlayMusicController::class, 'getRecommendedMusic']);
+
+$app->router->post('/api/InsMusic/Insert', [InsMusicController::class, 'addMusicViaApi']);
+
+$app->router->get('/api/SearchMusic/getData', [SearchMusicController::class, 'getPagedMusicData']);
+
+$app->router->get('/api/test', function () {
+    return 'Test route working!';
+});
 
 
 
