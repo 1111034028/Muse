@@ -53,5 +53,22 @@ class PlayMusicController
             return ['error' => '獲取推薦音樂失敗', 'message' => $e->getMessage()];
         }
     }
+
+    public function playMusic(Request $request) {
+
+        $musicID = $request->body()['musicId'] ?? null;
+
+        try {
+            $music = $this->musicModel->findMusicByID($musicID);
+
+            if (!$music) {
+                return ['error' => '找不到指定的音樂'];
+            }
+
+            return ['success' => '找到音樂', 'music' => $music];
+        } catch (Exception $e) {
+            return ['error' => '查詢失敗', 'message' => $e->getMessage()];
+        }
+    }
 }
 ?>

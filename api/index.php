@@ -57,6 +57,7 @@ $app->router->post('/api/Login/forgetpwd', [LoginController::class, 'forgetpwd']
 $app->router->post('/api/Login/resetpwd', [LoginController::class, 'resetpwd']);
 
 $app->router->post('/api/PlayMusic/findMusicByName', [PlayMusicController::class, 'getMusicByName']);
+$app->router->post('/api/PlayMusic/play', [PlayMusicController::class, 'playMusic']);
 $app->router->get('/api/PlayMusic/getTop3Music', [PlayMusicController::class, 'getTop3Music']);
 $app->router->get('/api/PlayMusic/getRecommendedMusic', [PlayMusicController::class, 'getRecommendedMusic']);
 

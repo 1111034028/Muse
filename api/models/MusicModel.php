@@ -36,6 +36,22 @@ class MusicModel
         return $result[0]; // 返回第一筆數據（匹配的音樂）
     }
 
+    public function findMusicByID(string $music_ID)
+    {
+        $sql = "SELECT Music_ID, Music_Name, Artist, Music_Url
+                FROM Music 
+                WHERE Music_ID = :music_ID";
+        $params = [':music_ID' => $music_ID];
+
+        $result = DatabaseHelper::getData($sql, $params);
+
+        if (empty($result)) {
+            return null; // 沒有找到符合條件的音樂
+        }
+
+        return $result; // 返回第一筆數據（匹配的音樂）
+    }
+
     public function getTop3()
     {
         $sql = "SELECT Music_ID, Music_Name, Artist, Music_Url 
