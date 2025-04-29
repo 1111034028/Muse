@@ -52,6 +52,12 @@ class SearchMusicController{
                     "records" => $records
                 ]
             ];
+            if($records == []){
+                $response = [
+                    "status" => "error",
+                    "message" => "查無此結果"
+                ];
+            }
 
             // 輸出為 JSON
             header('Content-Type: application/json');
