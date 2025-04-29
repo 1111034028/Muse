@@ -7,7 +7,7 @@ use project\DataBase\DatabaseHelper;
 
 class SearchMusicController{
     
-    public function getPagedMusicData(): void{
+    public function getPagedMusicData(){
         
         $request = new Request();
         $request->setParams($_GET);
@@ -41,8 +41,12 @@ class SearchMusicController{
 
             $records = DatabaseHelper::getData($pagedRecordsQuery);
 
+            if($records == []){
+                return [ 'status' => 'error', 'message' => '查無此結果' ];
+            }
+
             // 構建回應數據
-            $response = [
+            return [
                 "status" => "success",
                 "data" => [
                     "currentPage" => $currentPage,
@@ -52,24 +56,9 @@ class SearchMusicController{
                     "records" => $records
                 ]
             ];
-            if($records == []){
-                $response = [
-                    "status" => "error",
-                    "message" => "查無此結果"
-                ];
-            }
-
-            // 輸出為 JSON
-            header('Content-Type: application/json');
-            echo json_encode($response, JSON_PRETTY_PRINT);
-        } catch (Exception $e) {
-            // 捕捉錯誤並返回 JSON 錯誤訊息
-            $errorResponse = [
-                "status" => "error",
-                "message" => $e->getMessage()
-            ];
-            header('Content-Type: application/json');
-            echo json_encode($errorResponse, JSON_PRETTY_PRINT);
+            
+            } catch (Exception $e) {
+            return [ 'status' => 'error', 'message' => $e->getMessage() ];
         }
     }
 }
