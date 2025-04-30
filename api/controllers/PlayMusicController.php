@@ -60,6 +60,8 @@ class PlayMusicController
 
         try {
             $music = $this->musicModel->findMusicByID($musicID);
+            $url = $music[0]["Music_Url"];
+            $music[0]["Music_Url"] = base64_encode($url);
 
             if (!$music) {
                 return ['error' => '找不到指定的音樂'];

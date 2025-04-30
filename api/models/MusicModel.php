@@ -81,20 +81,17 @@ class MusicModel
             throw new Exception("獲取所有音樂時發生錯誤：" . $e->getMessage());
         }
     }
-    public function main(){
-        InsertMusic("a", "b", "c");
-        print_r("Hello world");
-    }
+
     // 新增音樂到資料庫
-    public function InsertMusic($musicName, $artist, $musicURL)
-    {
+    public function InsertMusic($musicName, $artist, $musicURL){
+        
         $sql = "INSERT INTO Music (Music_Name, Artist, Music_Url) 
                 VALUES (:music_name, :artist, :music_url)";
         $params = [
             ':music_name' => $musicName,
             ':artist' => $artist,
             ':music_url' => $musicURL
-            ];
+        ];
     
         try {
             DatabaseHelper::getData($sql, $params);
@@ -106,4 +103,3 @@ class MusicModel
     }
 }
 ?>
-
