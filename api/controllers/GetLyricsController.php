@@ -10,7 +10,7 @@ class GetLyricsController
 
     public function __construct()
     {
-        $this->accessToken = "2jUjRILIDgIjPz9riRh4FSc-BY23OPCdDfQtkm0KRglBljHSf9JTZBkHrAweKAla";
+        $this->accessToken = "XeN88dWlyFwgof5jXJdTq81nKlazFv9QjIUDv6O3IlyybgXnLkjGI5rWvjsuX8QV";
     }
 
     // 搜尋音樂並獲取歌詞
